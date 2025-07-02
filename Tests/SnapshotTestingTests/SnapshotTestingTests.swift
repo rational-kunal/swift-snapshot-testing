@@ -911,25 +911,26 @@ final class SnapshotTestingTests: BaseTestCase {
     #endif
   }
 
-  func testUserInterfaceStyleTraitWithView() {
+  func testUserInterfaceStyleTraitWithSwiftUIView() {
     #if os(iOS)
-      let label = UILabel()
-      label.backgroundColor = UIColor(dynamicProvider: { collection in
-        collection.userInterfaceStyle == .dark ? .red : .blue
-      })
-      label.textColor = UIColor.label
-      label.text = "What's the point?"
+    struct MyView: SwiftUI.View {
+      var body: some SwiftUI.View {
+        HStack {
+          Image(systemName: "checkmark.circle.fill")
+          Text("Checked").fixedSize()
+        }
+        .padding(5)
+        .background(Color(UIColor(dynamicProvider: { collection in
+          collection.userInterfaceStyle == .dark ? .red : .blue
+        })))
+        .padding(10)
+      }
+    }
 
-      assertSnapshot(
-        of: label,
-        as: .image(traits: .init(userInterfaceStyle: .dark)),
-        named: "dark-label-\(name)"
-      )
-      assertSnapshot(
-        of: label,
-        as: .image(traits: .init(userInterfaceStyle: .light)),
-        named: "light-label-\(name)"
-      )
+    let view = MyView().background(Color.yellow)
+
+    assertSnapshot(of: view, as: .image(traits: .init(userInterfaceStyle: .light)), named: "light")
+    assertSnapshot(of: view, as: .image(traits: .init(userInterfaceStyle: .dark)), named: "dark")
     #endif
   }
 
