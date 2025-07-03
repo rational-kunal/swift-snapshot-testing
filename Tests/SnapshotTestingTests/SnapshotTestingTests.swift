@@ -913,21 +913,23 @@ final class SnapshotTestingTests: BaseTestCase {
 
   func testUserInterfaceStyleTraitWithSwiftUIView() {
     #if os(iOS)
-    struct MyView: SwiftUI.View {
-      static let adaptiveColor: Color = {
+    class Theme {
+      static let shared = Theme()
+      let adaptiveColor: Color = {
         return Color(UIColor(dynamicProvider: { collection in
           if collection.userInterfaceStyle == .dark { .red }
           else { .cyan }
         }))
       }()
-
+    }
+    struct MyView: SwiftUI.View {
       var body: some SwiftUI.View {
         HStack {
           Image(systemName: "checkmark.circle.fill")
           Text("Checked").fixedSize()
         }
         .padding(5)
-        .background(MyView.adaptiveColor)
+        .background(Theme.shared.adaptiveColor)
         .padding(10)
       }
     }
