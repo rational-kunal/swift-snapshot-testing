@@ -922,7 +922,7 @@ final class SnapshotTestingTests: BaseTestCase {
         background: Color(
           light: .rgb(0.875, 0.898, 0.949),
           dark: .rgb(0.153, 0.161, 0.2)
-        ),
+        )
       )
       
     }
