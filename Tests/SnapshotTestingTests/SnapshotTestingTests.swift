@@ -941,8 +941,8 @@ final class SnapshotTestingTests: BaseTestCase {
 
     let view = MyView().background(Color.yellow)
 
-    assertSnapshot(of: view, as: .image(traits: .init(userInterfaceStyle: .light)), named: "light")
-    assertSnapshot(of: view, as: .image(traits: .init(userInterfaceStyle: .dark)), named: "-dark")
+    assertSnapshot(of: view, as: .image(traits: .init(userInterfaceStyle: .dark)), named: "light")
+    assertSnapshot(of: view, as: .image(traits: .init(userInterfaceStyle: .light)), named: "dark")
     #endif
   }
 
