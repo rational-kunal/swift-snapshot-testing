@@ -1380,6 +1380,7 @@ final class SnapshotTestingTests: BaseTestCase {
     ]
 #endif
 
+#if os(iOS)
 public extension UIColor {
   convenience init(
     light lightColor: @escaping @autoclosure () -> UIColor,
@@ -1416,3 +1417,4 @@ public extension Color {
     self.init(UIColor(light: lightColor(), dark: darkColor()))
   }
 }
+#endif
