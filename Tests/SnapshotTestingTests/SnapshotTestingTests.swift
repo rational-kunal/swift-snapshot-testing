@@ -913,15 +913,20 @@ final class SnapshotTestingTests: BaseTestCase {
 
   func testUserInterfaceStyleTraitWithSwiftUIView() {
     #if os(iOS)
-    class Theme {
-      static let shared = Theme()
-      let adaptiveColor: Color = {
-        return Color(UIColor(dynamicProvider: { collection in
-          if collection.userInterfaceStyle == .dark { .red }
-          else { .cyan }
-        }))
-      }()
+    struct NBTheme: Sendable {
+      public private(set) var background: Color
+      
+      // MARK: Themes
+      
+      public static let `default`: NBTheme = .init(
+        background: Color(
+          light: .rgb(0.875, 0.898, 0.949),
+          dark: .rgb(0.153, 0.161, 0.2)
+        ),
+      )
+      
     }
+    
     struct MyView: SwiftUI.View {
       var body: some SwiftUI.View {
         HStack {
@@ -929,7 +934,7 @@ final class SnapshotTestingTests: BaseTestCase {
           Text("Checked").fixedSize()
         }
         .padding(5)
-        .background(Theme.shared.adaptiveColor)
+        .background(NBTheme.default.background)
         .padding(10)
       }
     }
@@ -1374,3 +1379,40 @@ final class SnapshotTestingTests: BaseTestCase {
       "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge,
     ]
 #endif
+
+public extension UIColor {
+  convenience init(
+    light lightColor: @escaping @autoclosure () -> UIColor,
+    dark darkColor: @escaping @autoclosure () -> UIColor
+  ) {
+    self.init { traitCollection in
+      switch traitCollection.userInterfaceStyle {
+      case .light:
+        return lightColor()
+      case .dark:
+        return darkColor()
+      case .unspecified:
+        return lightColor()
+      @unknown default:
+        return lightColor()
+      }
+    }
+  }
+  
+  static func rgb(_ red: CGFloat, _ green: CGFloat, _ blue: CGFloat) -> UIColor {
+    return .rgba(red, green, blue, 1.0)
+  }
+  
+  static func rgba(_ red: CGFloat, _ green: CGFloat, _ blue: CGFloat, _ alpha: CGFloat) -> UIColor {
+    return .init(red: red, green: green, blue: blue, alpha: alpha)
+  }
+}
+
+public extension Color {
+  init(
+    light lightColor: @escaping @autoclosure () -> UIColor,
+    dark darkColor: @escaping @autoclosure () -> UIColor
+  ) {
+    self.init(UIColor(light: lightColor(), dark: darkColor()))
+  }
+}
